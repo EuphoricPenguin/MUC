@@ -1,0 +1,20 @@
+{
+  "name": "markov-user-cloner",
+  "version": "1.0.0",
+  "description": "A Discord bot that clones everyone in the server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "clone",
+    "markov",
+    "Discord"
+  ],
+  "author": "EuphoricPenguin",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.1.1",
+    "purpl-markov-chain": "^2.0.2"
+  }
+}
