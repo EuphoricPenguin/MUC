@@ -10,6 +10,6 @@ The bot uses the last 100 sent messages to generate a markov chain, filtering ba
 
 `!help` will send a DM explaining this information in a concise manner.
 
-If you are looking to use this bot in your own server, a publically available version can be found here (placeholder).
+If you are looking to use this bot in your own server, a publically available version can be found [here](https://discordapp.com/api/oauth2/authorize?client_id=689992764020097082&permissions=68608&scope=bot).
 
 If you wish to run it youself, you must first install Node.JS. Download and unzip the repo, and edit the *config.json* file with your bot's token. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in.
