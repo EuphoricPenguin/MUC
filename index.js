@@ -52,7 +52,9 @@ client.on("message", msg => {
                 `
 Use \`${config.prefix}clone <id>\` to clone anyone, or use \`all\` instead to clone everyone.
 If you want to re-generate a new message, use \`${config.prefix}regen\`.
-*The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*`);
+*The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
+
+**Currently, this bot is in ${client.guilds.size}`);
         }
     }
 
