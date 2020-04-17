@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (C) EuphoricPenguin, MIT License
- * v1.0.0
+ * v1.1.0
  */
 const config = require("./config.json")
 const Markov = require("purpl-markov-chain");
@@ -15,13 +15,14 @@ client.on("ready", () => {
 });
 
 client.on("message", msg => {
-    if (msg.author.bot && !msg.content.indexOf(config.prefix) === 0) return;
+    if (msg.author.bot) return;
+    if (msg.guild === null || !msg.content.indexOf(config.prefix) === 0) return;
 
     let command = msg.content.substring(1);
     let commandArr = command.split(" ");
     let guild = msg.guild.id;
     const commandsObj = {
-        "clone": function (id) {
+        "clone": async function (id) {
             console.log(`cloning ${id} in ${guild}`);
             guildsObj[guild] = new Markov();
             fetchMessages(id)
@@ -38,7 +39,7 @@ client.on("message", msg => {
                     }
                 });
         },
-        "regen": function () {
+        "regen": async function () {
             if (guild in guildsObj) {
                 console.log(`regenerating in ${guild}`);
                 msg.channel.send(`They also might say:
@@ -47,14 +48,17 @@ client.on("message", msg => {
                 msg.reply(`use \`${config.prefix}regen\` only after using \`${config.prefix}clone.\``);
             }
         },
-        "help": function () {
+        "help": async function () {
             msg.author.send(config.helpIntro +
                 `
 Use \`${config.prefix}clone <id>\` to clone anyone, or use \`all\` instead to clone everyone.
 If you want to re-generate a new message, use \`${config.prefix}regen\`.
 *The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
 
-**Currently, this bot is in ${client.guilds.size} guilds.**`);
+**Here's some fun facts about this bot:**
+*Uptime: ${fetchUptime()}*
+*Since it was last started, this bot has saw active use in ${Object.keys(guildsObj).length} guild(s).*`);
+            msg.reply("I sent you a DM with usage information.");
         }
     }
 
@@ -63,7 +67,11 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
         let commandObjKeys = Object.keys(commandsObj);
         commandObjKeys.forEach(key => {
             if (commandArr[0] === key && exec) {
-                commandsObj[commandArr[0]](commandArr[1]);
+                msg.channel.startTyping();
+                commandsObj[commandArr[0]](commandArr[1])
+                    .then(() => {
+                        msg.channel.stopTyping();
+                    });
             } else if (commandArr[0] === key) {
                 foundKey = true;
             }
@@ -79,6 +87,15 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
             }
         });
         return output.filter(m => m != undefined);
+    }
+
+    function fetchUptime() {
+        let miliseconds = client.uptime;
+        let seconds = Math.round(miliseconds / 1000) % 60;
+        let minutes = Math.round((seconds / 60) % 60);
+        let hours = Math.round((minutes / 60) % 24);
+        let days = Math.round(hours / 24);
+        return `(D)${days}:(H)${hours}:(M)${minutes}:(S)${seconds}`;
     }
 
     if (!commandIntp(commandArr, false)) {
