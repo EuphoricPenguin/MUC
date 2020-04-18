@@ -59,9 +59,7 @@ client.on("message", msg => {
 Use \`${config.prefix}clone <id>\` to clone anyone, or use \`all\` instead to clone everyone.
 If you want to re-generate a new message, use \`${config.prefix}regen\`.
 *The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
-
 **Here's some fun facts about this bot:**
-*Uptime: ${fetchUptime()}*
 *Since it was last started, this bot has saw active use in ${Object.keys(guildsObj).length} guild(s).*`);
             msg.reply("I sent you a DM with usage information.");
         }
@@ -96,7 +94,7 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
 
     function fetchUptime() {
         let miliseconds = client.uptime;
-        
+        //This needs fixed
         return `(D)${days}:(H)${hours}:(M)${minutes}:(S)${seconds}`;
     }
 
