@@ -21,7 +21,8 @@ client.on("ready", () => {
 
 client.on("message", msg => {
     if (msg.author.bot) return;
-    if (msg.guild === null || !msg.content.indexOf(config.prefix) === 0) return;
+    if(!msg.content.indexOf(config.prefix) === 0) return;
+    if (msg.guild === null) return;
 
     let command = msg.content.substring(1);
     let commandArr = command.split(" ");
