@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (C) EuphoricPenguin, MIT License
- * v1.1.1
+ * v1.1.2
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -21,8 +21,7 @@ client.on("ready", () => {
 
 client.on("message", msg => {
     if (msg.author.bot) return;
-    if(!msg.content.indexOf(config.prefix) === 0) return;
-    if (msg.guild === null) return;
+    if (msg.guild === null || !(msg.content.indexOf(config.prefix) === 0)) return;
 
     let command = msg.content.substring(1);
     let commandArr = command.split(" ");
@@ -105,7 +104,7 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
     }
 
     if (!commandIntp(commandArr, false)) {
-        msg.reply("Invalid command. You can always ask for `" + config.prefix + "help`.");
+        msg.reply(`Invalid command. You can always ask for \`${config.prefix}help\``);
     } else {
         commandIntp(commandArr, true);
     }
