@@ -14,4 +14,4 @@ The bot uses the last 100 sent messages to generate a markov chain, filtering ba
 
 `!help` will send a DM explaining this information in a concise manner.
 
-If you wish to run it youself, you must first install Node.JS. Download and unzip the repo, and edit the *config.json* file with your bot's token. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in.
+If you wish to run it youself, you must first install Node.JS. Download and unzip the repo, and edit the *.env* file with your bot's token. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in.
