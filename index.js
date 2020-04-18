@@ -96,10 +96,7 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
 
     function fetchUptime() {
         let miliseconds = client.uptime;
-        let seconds = Math.round(miliseconds / 1000) % 60;
-        let minutes = Math.round((seconds / 60) % 60);
-        let hours = Math.round((minutes / 60) % 24);
-        let days = Math.round(hours / 24);
+        
         return `(D)${days}:(H)${hours}:(M)${minutes}:(S)${seconds}`;
     }
 
