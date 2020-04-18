@@ -1,13 +1,18 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (C) EuphoricPenguin, MIT License
- * v1.1.0
+ * v1.1.1
  */
-const config = require("./config.json")
+require("dotenv").config();
+const config = require("./config.json");
+
 const Markov = require("purpl-markov-chain");
+
 const Discord = require("discord.js");
 const client = new Discord.Client();
+
 let guildsObj = {};
+
 client.on("ready", () => {
     console.log(`MUC logged in as: ${client.user.tag}`);
     client.user.setActivity(config.status, { type: "WATCHING" })
@@ -107,4 +112,4 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
 
 client.on("error", console.error);
 
-client.login(config.token);
+client.login(process.env.TOKEN);
