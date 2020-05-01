@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (C) EuphoricPenguin, MIT License
- * v1.1.2
+ * v1.1.3
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -28,10 +28,11 @@ client.on("message", msg => {
     let guild = msg.guild.id;
     const commandsObj = {
         "clone": async function (id) {
-            console.log(`cloning ${id} in ${guild}`);
             guildsObj[guild] = new Markov();
             fetchMessages(id)
                 .then(msgs => {
+                    if (!(invalidUserCheck(msgs) == undefined)) return;
+                    console.log(`cloning ${id} in ${guild}`);
                     msgs.forEach(msg => {
                         guildsObj[guild].update(msg);
                     });
@@ -46,6 +47,7 @@ client.on("message", msg => {
         },
         "regen": async function () {
             if (guild in guildsObj) {
+                if (!(invalidUserCheck(msgs) == undefined)) return;
                 console.log(`regenerating in ${guild}`);
                 msg.channel.send(`They also might say:
                     \`\`\`${guildsObj[guild].generate()}\`\`\``);
@@ -60,6 +62,7 @@ Use \`${config.prefix}clone <id>\` to clone anyone, or use \`all\` instead to cl
 If you want to re-generate a new message, use \`${config.prefix}regen\`.
 *The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
 **Here's some fun facts about this bot:**
+*Uptime:* ***${await fetchUptime()}***
 *Since it was last started, this bot has saw active use in ${Object.keys(guildsObj).length} guild(s).*`);
             msg.reply("I sent you a DM with usage information.");
         }
@@ -92,10 +95,13 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
         return output.filter(m => m != undefined);
     }
 
-    function fetchUptime() {
-        let miliseconds = client.uptime;
-        //This needs fixed
-        return `(D)${days}:(H)${hours}:(M)${minutes}:(S)${seconds}`;
+    async function fetchUptime() {
+        //Need to find a better way to calculate this accurately.
+        return client.uptime;
+    }
+
+    function invalidUserCheck(msgs) {
+        if (msgs.length < 1) return msg.reply("looks like that failed for some reason. Please try a different user, or check your command for typos.");
     }
 
     if (!commandIntp(commandArr, false)) {
