@@ -7,11 +7,11 @@ MUC (Markov User Cloner) is a new Discord bot project of mine; it will be regula
 
 With v1.1.x, three commands are present:
 
-`!clone <id>` will clone a user based on their id, or the keyword `all`.
+`,m clone <id>` will clone a user based on their id, or the keyword `all`.
 The bot uses the last 100 sent messages to generate a markov chain, filtering based on id.
 
-`!regen` will use the last created markov chain for your server, and generate another reply.
+`,m regen` will use the last created markov chain for your server, and generate another reply.
 
-`!help` will send a DM explaining this information in a concise manner.
+`,m help` will send a DM explaining this information in a concise manner.
 
 If you wish to run it youself, you must first install Node.JS. Download and unzip the repo, and create a *.env* file with your bot's token, lke this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in.

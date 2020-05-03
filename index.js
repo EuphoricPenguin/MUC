@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
- * (C) EuphoricPenguin, MIT License
- * v1.1.3
+ * (c) EuphoricPenguin, MIT License
+ * v1.1.4
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -15,23 +15,23 @@ let guildsObj = {};
 
 client.on("ready", () => {
     console.log(`MUC logged in as: ${client.user.tag}`);
-    client.user.setActivity(config.status, { type: "WATCHING" })
+    client.user.setActivity(`for ${config.prefix}help`, { type: "WATCHING" })
         .catch(console.error);
 });
 
 client.on("message", msg => {
     if (msg.author.bot) return;
-    if (msg.guild === null || !(msg.content.indexOf(config.prefix) === 0)) return;
+    if (msg.guild === null || !(msg.content.startsWith(config.prefix))) return;
 
-    let command = msg.content.substring(1);
-    let commandArr = command.split(" ");
+    let command = msg.content.substring(config.prefix.length);
+    let commandArr = command.split(" ").filter(i => i != "");
     let guild = msg.guild.id;
     const commandsObj = {
         "clone": async function (id) {
-            guildsObj[guild] = new Markov();
             fetchMessages(id)
                 .then(msgs => {
-                    if (!(invalidUserCheck(msgs) == undefined)) return;
+                    if (invalidUserCheck(msgs) != undefined) return;
+                    guildsObj[guild] = new Markov();
                     console.log(`cloning ${id} in ${guild}`);
                     msgs.forEach(msg => {
                         guildsObj[guild].update(msg);
@@ -47,19 +47,18 @@ client.on("message", msg => {
         },
         "regen": async function () {
             if (guild in guildsObj) {
-                if (!(invalidUserCheck(msgs) == undefined)) return;
                 console.log(`regenerating in ${guild}`);
                 msg.channel.send(`They also might say:
                     \`\`\`${guildsObj[guild].generate()}\`\`\``);
             } else {
-                msg.reply(`use \`${config.prefix}regen\` only after using \`${config.prefix}clone.\``);
+                msg.reply(`use \`${config.prefix} regen\` only after using \`${config.prefix} clone.\``);
             }
         },
         "help": async function () {
             msg.author.send(config.helpIntro +
                 `
-Use \`${config.prefix}clone <id>\` to clone anyone, or use \`all\` instead to clone everyone.
-If you want to re-generate a new message, use \`${config.prefix}regen\`.
+Use \`${config.prefix} clone <id>\` to clone anyone, or use \`all\` instead to clone everyone.
+If you want to re-generate a new message, use \`${config.prefix} regen\`.
 *The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
 **Here's some fun facts about this bot:**
 *Uptime:* ***${await fetchUptime()}***
@@ -96,8 +95,7 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
     }
 
     async function fetchUptime() {
-        //Need to find a better way to calculate this accurately.
-        return client.uptime;
+        return `${Math.floor(client.uptime / 86400000)} days, ${Math.floor(client.uptime / 3600000)} hours`;
     }
 
     function invalidUserCheck(msgs) {
@@ -105,7 +103,7 @@ If you want to re-generate a new message, use \`${config.prefix}regen\`.
     }
 
     if (!commandIntp(commandArr, false)) {
-        msg.reply(`Invalid command. You can always ask for \`${config.prefix}help\``);
+        msg.reply(`Invalid command. You can always ask for \`${config.prefix} help\``);
     } else {
         commandIntp(commandArr, true);
     }
