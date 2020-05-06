@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.1.4
+ * v1.2.0
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -15,16 +15,21 @@ let guildsObj = {};
 
 client.on("ready", () => {
     console.log(`MUC logged in as: ${client.user.tag}`);
-    client.user.setActivity(`for ${config.prefix}help`, { type: "WATCHING" })
+    client.user.setActivity(`for ${config.prefix} help`, { type: "WATCHING" })
         .catch(console.error);
 });
 
 client.on("message", msg => {
     if (msg.author.bot) return;
     if (msg.guild === null || !(msg.content.startsWith(config.prefix))) return;
-
     let command = msg.content.substring(config.prefix.length);
-    let commandArr = command.split(" ").filter(i => i != "");
+    let commandArr = command.split(" ").filter(i => i !== "");
+
+    //Strips mentions down to user id's
+    if (commandArr[1].includes("<@!")) {
+        commandArr[1] = commandArr[1].substring(3, commandArr[1].length - 1);
+    }
+
     let guild = msg.guild.id;
     const commandsObj = {
         "clone": async function (id) {
@@ -57,7 +62,7 @@ client.on("message", msg => {
         "help": async function () {
             msg.author.send(config.helpIntro +
                 `
-Use \`${config.prefix} clone <id>\` to clone anyone, or use \`all\` instead to clone everyone.
+Use \`${config.prefix} clone @user\` to clone anyone, or use \`all\` instead (no @) to clone everyone.
 If you want to re-generate a new message, use \`${config.prefix} regen\`.
 *The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
 **Here's some fun facts about this bot:**
@@ -95,7 +100,7 @@ If you want to re-generate a new message, use \`${config.prefix} regen\`.
     }
 
     async function fetchUptime() {
-        return `${Math.floor(client.uptime / 86400000)} days, ${Math.floor(client.uptime / 3600000)} hours`;
+        return `${Math.floor(client.uptime / 86400000)} day(s), ${Math.floor(client.uptime / 3600000)} hour(s)`;
     }
 
     function invalidUserCheck(msgs) {
