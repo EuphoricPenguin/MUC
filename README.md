@@ -1,6 +1,6 @@
 <img src="./media/MUC_t.png" width="100">
 
-If you are looking to use this bot in your own server, a public version will be released after more features are implemented; the bot is as of late far too basic and somewhat unstable for a meaningful launch.
+If you are looking to use this bot in your own server, a public version will be re-released after more features are implemented. I have been progressing fairly well with the past several updates; plenty of bug fixes, mention support, and embeds have now all been implemented. Once I buff the embeds with more detailed user data, and perhaps tweak the message grabber function to support more messages, I plan to re-launch soon.
 
 
 MUC (Markov User Cloner) is a new Discord bot project of mine; it will be regularly updated, and is intended to be a public bot. While many bots exist to facilitate interaction with markov chains, I wish to create a simple open source example that people can both interact with and modify. This serves mainly as a refresher for me to try some new things in JavaScript, and as my first foray into public bot development.               
