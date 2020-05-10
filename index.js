@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.3.0
+ * v1.3.1
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -42,38 +42,37 @@ client.on("message", msg => {
                         guildsObj[guild].update(msg);
                     });
                     if (id === "all") {
-                        let embed = new Discord.MessageEmbed()
+                        var clone = new Discord.MessageEmbed()
                             .setColor("#000000")
                             .setAuthor("Everyone might say:", "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/MUC.png")
                             .setDescription(`\`\`\`${guildsObj[guild].generate()}\`\`\``);
-                        msg.channel.send(embed);
                     } else {
-                        let embed = new Discord.MessageEmbed()
+                        var clone = new Discord.MessageEmbed()
                             .setColor("#000000")
                             .setAuthor(`${id} might say:`, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/MUC.png")
                             .setDescription(`\`\`\`${guildsObj[guild].generate()}\`\`\``);
-                        msg.channel.send(embed);
                     }
+                    msg.channel.send(clone);
                 });
         },
         "regen": async function () {
             if (guild in guildsObj) {
                 console.log(`regenerating in ${guild}`);
-                let embed = new Discord.MessageEmbed()
+                let regen = new Discord.MessageEmbed()
                     .setColor("#FFFFFF")
                     .setAuthor("They also might say:", "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/MUC.png")
                     .setDescription(`\`\`\`${guildsObj[guild].generate()}\`\`\``);
-                msg.channel.send(embed);
+                msg.channel.send(regen);
             } else {
-                let embed = new Discord.MessageEmbed()
+                let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
                     .setDescription(`use \`${config.prefix} regen\` only after using \`${config.prefix} clone.\``);
-                msg.reply(embed);
+                msg.reply(issue);
             }
         },
         "help": async function () {
-            let embed = new Discord.MessageEmbed()
+            let help = new Discord.MessageEmbed()
                 .setColor("#0099E1")
                 .setAuthor(config.helpIntro)
                 .setDescription(`
@@ -82,9 +81,12 @@ If you want to re-generate a new message, use \`${config.prefix} regen\`.
 *The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
 **Here's some fun facts about this bot:**
 *Uptime:* ***${await fetchUptime()}***
-*Since it was last started, this bot has saw active use in ${Object.keys(guildsObj).length} guild(s).*`);
-            msg.author.send(embed);
-            msg.reply("I sent you a DM with usage information.");
+*Since it was last started, this bot has saw active use in:* ***${Object.keys(guildsObj).length} guild(s)***`);
+            msg.author.send(help);
+            let helpRemind = new Discord.MessageEmbed()
+                .setColor("#0099E1")
+                .setDescription("***Help just slid into your DMs.***");
+            msg.reply(helpRemind);
         }
     }
 
@@ -121,21 +123,21 @@ If you want to re-generate a new message, use \`${config.prefix} regen\`.
 
     function invalidUserCheck(msgs) {
         if (msgs.length < 1) {
-            let embed = new Discord.MessageEmbed()
+            let issue = new Discord.MessageEmbed()
                 .setColor("#F93A2F")
                 .setAuthor("Error:")
                 .setDescription(`*Huston, we have an ID problem.* Looks like you might've had a typo, or the user hasn't sent any plain-text messages. You can always ask for \`${config.prefix} help\``);
-            msg.reply(embed);
+            msg.reply(issue);
             return true;
         }
     }
 
     if (!commandIntp(commandArr, false)) {
-        let embed = new Discord.MessageEmbed()
+        let issue = new Discord.MessageEmbed()
             .setColor("#F93A2F")
             .setAuthor("Error:")
             .setDescription(`*Huston, we have an invalid command.* You can always ask for \`${config.prefix} help\``);
-        msg.reply(embed);
+        msg.reply(issue);
 
     } else {
         commandIntp(commandArr, true);
