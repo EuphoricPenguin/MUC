@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.3.1
+ * v1.4.0
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -33,35 +33,39 @@ client.on("message", msg => {
     let guild = msg.guild.id;
     const commandsObj = {
         "clone": async function (id) {
-            fetchMessages(id)
+            let targetUser = await client.users.fetch(id);
+            fetchMessages(targetUser)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
-                    guildsObj[guild] = new Markov();
-                    console.log(`cloning ${id} in ${guild}`);
+                    guildsObj[guild] = {
+                        chain: new Markov(),
+                        user: targetUser
+                    }
+                    console.log(`cloning ${guildsObj[guild].user.tag} in ${guild}`);
                     msgs.forEach(msg => {
-                        guildsObj[guild].update(msg);
+                        guildsObj[guild].chain.update(msg);
                     });
                     if (id === "all") {
                         var clone = new Discord.MessageEmbed()
                             .setColor("#000000")
-                            .setAuthor("Everyone might say:", "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/MUC.png")
-                            .setDescription(`\`\`\`${guildsObj[guild].generate()}\`\`\``);
+                            .setAuthor("Everyone might say:", Client.user.displayAvatarUrl())
+                            .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
                     } else {
                         var clone = new Discord.MessageEmbed()
                             .setColor("#000000")
-                            .setAuthor(`${id} might say:`, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/MUC.png")
-                            .setDescription(`\`\`\`${guildsObj[guild].generate()}\`\`\``);
+                            .setAuthor(`${guildsObj[guild].user.tag} might say:`, guildsObj[guild].user.displayAvatarURL())
+                            .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
                     }
                     msg.channel.send(clone);
                 });
         },
         "regen": async function () {
             if (guild in guildsObj) {
-                console.log(`regenerating in ${guild}`);
+                console.log(`regenerating ${guildsObj[guild].user.tag} in ${guild}`);
                 let regen = new Discord.MessageEmbed()
                     .setColor("#FFFFFF")
-                    .setAuthor("They also might say:", "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/MUC.png")
-                    .setDescription(`\`\`\`${guildsObj[guild].generate()}\`\`\``);
+                    .setAuthor(`${guildsObj[guild].user.tag} also might say:`, guildsObj[guild].user.displayAvatarURL())
+                    .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
                 msg.channel.send(regen);
             } else {
                 let issue = new Discord.MessageEmbed()
@@ -107,10 +111,10 @@ If you want to re-generate a new message, use \`${config.prefix} regen\`.
         return foundKey;
     }
 
-    async function fetchMessages(id) {
+    async function fetchMessages(user) {
         let output = await msg.channel.messages.fetch({ limit: 100 });
         output = output.map(m => {
-            if (!m.author.bot && (m.author.id === id || id === "all")) {
+            if (!m.author.bot && (m.author.id === user.id || user.id === "all")) {
                 return m.content;
             }
         });

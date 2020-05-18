@@ -14,7 +14,7 @@
   "author": "EuphoricPenguin",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^12.1.1",
+    "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "purpl-markov-chain": "^2.0.2"
   }
