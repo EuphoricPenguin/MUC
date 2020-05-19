@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.4.0
+ * v1.4.1
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -33,6 +33,14 @@ client.on("message", msg => {
     let guild = msg.guild.id;
     const commandsObj = {
         "clone": async function (id) {
+            if (!msg.guild.member(id)) {
+                let issue = new Discord.MessageEmbed()
+                    .setColor("#F93A2F")
+                    .setAuthor("Error:")
+                    .setDescription(`*Huston, we have an ID problem.* Looks like that user doesn't exist (you probably made a typo). You can always ask for \`${config.prefix} help\``);
+                msg.reply(issue);
+                return;
+            }
             let targetUser = await client.users.fetch(id);
             fetchMessages(targetUser)
                 .then(msgs => {
@@ -78,7 +86,7 @@ client.on("message", msg => {
         "help": async function () {
             let help = new Discord.MessageEmbed()
                 .setColor("#0099E1")
-                .setAuthor(config.helpIntro)
+                .setAuthor(config.helpIntro, client.user.displayavatarURL())
                 .setDescription(`
 Use \`${config.prefix} clone @user\` to clone anyone, or use \`all\` instead (no @) to clone everyone.
 If you want to re-generate a new message, use \`${config.prefix} regen\`.
@@ -130,7 +138,7 @@ If you want to re-generate a new message, use \`${config.prefix} regen\`.
             let issue = new Discord.MessageEmbed()
                 .setColor("#F93A2F")
                 .setAuthor("Error:")
-                .setDescription(`*Huston, we have an ID problem.* Looks like you might've had a typo, or the user hasn't sent any plain-text messages. You can always ask for \`${config.prefix} help\``);
+                .setDescription(`*Huston, we can't see anything.* Looks like that user hasn't sent any plain-text messages.`);
             msg.reply(issue);
             return true;
         }
