@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.4.2 - working on fixing the all or everyone message receiving
+ * v1.4.3 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -49,7 +49,7 @@ client.on("message", msg => {
                         chain: new Markov(),
                         user: targetUser
                     }
-                    console.log(`cloning ${guildsObj[guild].user.tag} in ${guild}`);
+                    console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                     msgs.forEach(msg => {
                         guildsObj[guild].chain.update(msg);
                     });
@@ -86,7 +86,7 @@ client.on("message", msg => {
                     {
                         name: "Tidbits:", value: `
                     Uptime: **${await fetchUptime()}**
-                    Guild ratio: **${Object.keys(guildsObj).length/client.guilds.cache.size}**`
+                    Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length/client.guilds.cache.size})*`
                     })
                 .setFooter(config.helpFooter, client.user.displayAvatarURL());
             msg.channel.send(help);
