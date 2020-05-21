@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.4.1
+ * v1.4.2 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -53,17 +53,10 @@ client.on("message", msg => {
                     msgs.forEach(msg => {
                         guildsObj[guild].chain.update(msg);
                     });
-                    if (id === "all") {
-                        var clone = new Discord.MessageEmbed()
-                            .setColor("#000000")
-                            .setAuthor("Everyone might say:", Client.user.displayAvatarUrl())
-                            .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
-                    } else {
-                        var clone = new Discord.MessageEmbed()
-                            .setColor("#000000")
-                            .setAuthor(`${guildsObj[guild].user.tag} might say:`, guildsObj[guild].user.displayAvatarURL())
-                            .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
-                    }
+                    let clone = new Discord.MessageEmbed()
+                        .setColor("#000000")
+                        .setAuthor(`${guildsObj[guild].user.tag} might say:`, guildsObj[guild].user.displayAvatarURL())
+                        .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
                     msg.channel.send(clone);
                 });
         },
@@ -86,19 +79,17 @@ client.on("message", msg => {
         "help": async function () {
             let help = new Discord.MessageEmbed()
                 .setColor("#0099E1")
-                .setAuthor(config.helpIntro, client.user.displayavatarURL())
-                .setDescription(`
-Use \`${config.prefix} clone @user\` to clone anyone, or use \`all\` instead (no @) to clone everyone.
-If you want to re-generate a new message, use \`${config.prefix} regen\`.
-*The bot only uses the last 100 messages or so sent in the server, so keep this in mind.*
-**Here's some fun facts about this bot:**
-*Uptime:* ***${await fetchUptime()}***
-*Since it was last started, this bot has saw active use in:* ***${Object.keys(guildsObj).length} guild(s)***`);
-            msg.author.send(help);
-            let helpRemind = new Discord.MessageEmbed()
-                .setColor("#0099E1")
-                .setDescription("***Help just slid into your DMs.***");
-            msg.reply(helpRemind);
+                .addFields({
+                    name: "Commands:", value: `Use \`${config.prefix} clone @user\` to clone someone.
+                If you want to re-generate a new message, use \`${config.prefix} regen\`.`
+                },
+                    {
+                        name: "Tidbits:", value: `
+                    Uptime: **${await fetchUptime()}**
+                    Guild ratio: **${Object.keys(guildsObj).length/client.guilds.cache.size}**`
+                    })
+                .setFooter(config.helpFooter, client.user.displayAvatarURL());
+            msg.channel.send(help);
         }
     }
 
@@ -122,7 +113,7 @@ If you want to re-generate a new message, use \`${config.prefix} regen\`.
     async function fetchMessages(user) {
         let output = await msg.channel.messages.fetch({ limit: 100 });
         output = output.map(m => {
-            if (!m.author.bot && (m.author.id === user.id || user.id === "all")) {
+            if (!m.author.bot && (m.author.id === user.id)) {
                 return m.content;
             }
         });
