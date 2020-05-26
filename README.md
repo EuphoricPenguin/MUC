@@ -12,6 +12,6 @@ The bot uses the last 100 sent messages to generate a markov chain, filtering ba
 
 `,m regen` will use the last created markov chain for your server, and generate another reply.
 
-`,m help` will send a DM explaining this information in a concise manner.
+`,m help` will send a message in chat explaining this information in a concise manner.
 
 If you wish to run it youself, you must first install Node.JS >12. Download and unzip the repo, and create a *.env* file with your bot's token, lke this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in.
