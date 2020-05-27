@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.4.3 - working on fixing the all or everyone message receiving
+ * v1.5.0 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -21,8 +21,13 @@ client.on("ready", () => {
 
 client.on("message", msg => {
     if (msg.author.bot) return;
-    if (msg.guild === null || !(msg.content.startsWith(config.prefix))) return;
-    let command = msg.content.substring(config.prefix.length);
+
+    let guild = msg.guild.id;
+    if (!(guild in guildsObj)) guildsObj[guild] = {};
+    if (!("prefix" in guildsObj[guild])) guildsObj[guild].prefix = config.prefix;
+
+    if (!msg.guild || !(msg.content.startsWith(guildsObj[guild].prefix))) return;
+    let command = msg.content.substring(guildsObj[guild].prefix.length);
     let commandArr = command.split(" ").filter(i => i !== "");
 
     //Strips mentions down to user id's
@@ -30,25 +35,24 @@ client.on("message", msg => {
         commandArr[1] = commandArr[1].substring(3, commandArr[1].length - 1);
     }
 
-    let guild = msg.guild.id;
     const commandsObj = {
         "clone": async function (id) {
             if (!msg.guild.member(id)) {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
-                    .setDescription(`*Huston, we have an ID problem.* Looks like that user doesn't exist (you probably made a typo). You can always ask for \`${config.prefix} help\``);
+                    .setDescription(`*Huston, we have an ID problem.* Looks like that user doesn't exist (you probably made a typo). You can always ask for \`${guildsObj[guild].prefix} help\``);
                 msg.reply(issue);
                 return;
             }
             let targetUser = await client.users.fetch(id);
+            let gO = guildsObj[guild];
             fetchMessages(targetUser)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
-                    guildsObj[guild] = {
-                        chain: new Markov(),
-                        user: targetUser
-                    }
+                    gO.chain = new Markov();
+                    gO.user = targetUser;
+                    user: targetUser
                     console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                     msgs.forEach(msg => {
                         guildsObj[guild].chain.update(msg);
@@ -72,21 +76,36 @@ client.on("message", msg => {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
-                    .setDescription(`use \`${config.prefix} regen\` only after using \`${config.prefix} clone.\``);
+                    .setDescription(`use \`${guildsObj[guild].prefix} regen\` only after using \`${guildsObj[guild].prefix} clone.\``);
                 msg.reply(issue);
+            }
+        },
+        "prefix": async function (newPrefix) {
+            if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm)) {
+                guildsObj[guild].prefix = newPrefix;
+                let prefixChange = new Discord.MessageEmbed()
+                .setColor("#0099E1")
+                .setDescription(`Prefix changed to \`${guildsObj[guild].prefix}\``);
+                return msg.channel.send(prefixChange); 
+            } else {
+                let issue = new Discord.MessageEmbed()
+                    .setColor("#F93A2F")
+                    .setAuthor("Error:")
+                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, or the prefix is the same.`);
+                return msg.reply(issue);
             }
         },
         "help": async function () {
             let help = new Discord.MessageEmbed()
                 .setColor("#0099E1")
                 .addFields({
-                    name: "Commands:", value: `Use \`${config.prefix} clone @user\` to clone someone.
-                If you want to re-generate a new message, use \`${config.prefix} regen\`.`
+                    name: "Commands:", value: `Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
+                If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.`
                 },
                     {
                         name: "Tidbits:", value: `
                     Uptime: **${await fetchUptime()}**
-                    Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length/client.guilds.cache.size})*`
+                    Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
                     })
                 .setFooter(config.helpFooter, client.user.displayAvatarURL());
             msg.channel.send(help);
@@ -113,7 +132,7 @@ client.on("message", msg => {
     async function fetchMessages(user) {
         let output = await msg.channel.messages.fetch({ limit: 100 });
         output = output.map(m => {
-            if (!m.author.bot && (m.author.id === user.id)) {
+            if (!m.author.bot && m.author.id === user.id) {
                 return m.content;
             }
         });
@@ -139,7 +158,7 @@ client.on("message", msg => {
         let issue = new Discord.MessageEmbed()
             .setColor("#F93A2F")
             .setAuthor("Error:")
-            .setDescription(`*Huston, we have an invalid command.* You can always ask for \`${config.prefix} help\``);
+            .setDescription(`*Huston, we have an invalid command.* You can always ask for \`${guildsObj[guild].prefix} help\``);
         msg.reply(issue);
 
     } else {
