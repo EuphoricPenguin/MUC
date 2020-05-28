@@ -1,4 +1,4 @@
-<img src="./media/MUC_t.png" width="100">
+<img src="./media/muc-new-t" width="100">
 
 We will be launching soon; only feature left to implement is a better message grabber, and full @everyone support.
 
