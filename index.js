@@ -109,7 +109,7 @@ You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <strin
 `Uptime: **${await fetchUptime()}**
 Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
                     })
-                .setFooter(config.helpFooter, client.user.displayAvatarURL());
+                .setFooter(config.helpFooter, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/ep-icon.png");
             msg.channel.send(help);
         }
     }
