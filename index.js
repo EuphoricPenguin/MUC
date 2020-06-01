@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.5.0 - working on fixing the all or everyone message receiving
+ * v1.5.1 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -58,7 +58,7 @@ client.on("message", msg => {
                         guildsObj[guild].chain.update(msg);
                     });
                     let clone = new Discord.MessageEmbed()
-                        .setColor("#000000")
+                        .setColor("#FFFFFF")
                         .setAuthor(`${guildsObj[guild].user.tag} might say:`, guildsObj[guild].user.displayAvatarURL())
                         .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
                     msg.channel.send(clone);
@@ -66,7 +66,7 @@ client.on("message", msg => {
         },
         "regen": async function () {
             if (guild in guildsObj) {
-                console.log(`regenerating ${guildsObj[guild].user.tag} in ${guild}`);
+                console.log(`regenerating ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                 let regen = new Discord.MessageEmbed()
                     .setColor("#FFFFFF")
                     .setAuthor(`${guildsObj[guild].user.tag} also might say:`, guildsObj[guild].user.displayAvatarURL())
@@ -84,9 +84,9 @@ client.on("message", msg => {
             if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm)) {
                 guildsObj[guild].prefix = newPrefix;
                 let prefixChange = new Discord.MessageEmbed()
-                .setColor("#0099E1")
-                .setDescription(`Prefix changed to \`${guildsObj[guild].prefix}\``);
-                return msg.channel.send(prefixChange); 
+                    .setColor("#0099E1")
+                    .setDescription(`Prefix changed to \`${guildsObj[guild].prefix}\``);
+                return msg.channel.send(prefixChange);
             } else {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
@@ -99,13 +99,15 @@ client.on("message", msg => {
             let help = new Discord.MessageEmbed()
                 .setColor("#0099E1")
                 .addFields({
-                    name: "Commands:", value: `Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
-                If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.`
+                    name: "Commands:", value: 
+`Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
+If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
+You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
                     {
-                        name: "Tidbits:", value: `
-                    Uptime: **${await fetchUptime()}**
-                    Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
+                        name: "Tidbits:", value: 
+`Uptime: **${await fetchUptime()}**
+Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
                     })
                 .setFooter(config.helpFooter, client.user.displayAvatarURL());
             msg.channel.send(help);
