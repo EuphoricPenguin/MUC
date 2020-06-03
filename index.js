@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.5.1 - working on fixing the all or everyone message receiving
+ * v1.5.2 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -65,7 +65,7 @@ client.on("message", msg => {
                 });
         },
         "regen": async function () {
-            if (guild in guildsObj) {
+            if (guildsObj[guild].user != undefined) {
                 console.log(`regenerating ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                 let regen = new Discord.MessageEmbed()
                     .setColor("#FFFFFF")
@@ -76,7 +76,7 @@ client.on("message", msg => {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
-                    .setDescription(`use \`${guildsObj[guild].prefix} regen\` only after using \`${guildsObj[guild].prefix} clone.\``);
+                    .setDescription(`use \`${guildsObj[guild].prefix} regen\` only after using \`${guildsObj[guild].prefix} clone\`.`);
                 msg.reply(issue);
             }
         },
@@ -99,14 +99,14 @@ client.on("message", msg => {
             let help = new Discord.MessageEmbed()
                 .setColor("#0099E1")
                 .addFields({
-                    name: "Commands:", value: 
-`Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
+                    name: "Commands:", value:
+                        `Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
 If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
 You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
                     {
-                        name: "Tidbits:", value: 
-`Uptime: **${await fetchUptime()}**
+                        name: "Tidbits:", value:
+                            `Uptime: **${await fetchUptime()}**
 Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
                     })
                 .setFooter(config.helpFooter, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/ep-icon.png");
