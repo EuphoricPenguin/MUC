@@ -1,12 +1,13 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.5.2 - working on fixing the all or everyone message receiving
+ * v1.5.3 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
 
 const Markov = require("purpl-markov-chain");
+const Moment = require("moment");
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -52,7 +53,6 @@ client.on("message", msg => {
                     if (invalidUserCheck(msgs)) return;
                     gO.chain = new Markov();
                     gO.user = targetUser;
-                    user: targetUser
                     console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                     msgs.forEach(msg => {
                         guildsObj[guild].chain.update(msg);
@@ -65,7 +65,7 @@ client.on("message", msg => {
                 });
         },
         "regen": async function () {
-            if (guildsObj[guild].user != undefined) {
+            if (guildsObj[guild].user !== undefined) {
                 console.log(`regenerating ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                 let regen = new Discord.MessageEmbed()
                     .setColor("#FFFFFF")
@@ -138,11 +138,11 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
                 return m.content;
             }
         });
-        return output.filter(m => m != undefined);
+    return output.filter(m => m !== undefined && !(m.startsWith(guildsObj[guild].prefix)));
     }
 
     async function fetchUptime() {
-        return `${Math.floor(client.uptime / 86400000)} day(s), ${Math.floor(client.uptime / 3600000)} hour(s)`;
+        return Moment.duration(client.uptime).humanize();
     }
 
     function invalidUserCheck(msgs) {

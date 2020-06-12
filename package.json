@@ -1,6 +1,6 @@
 {
   "name": "markov-user-cloner",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "A Discord bot that clones everyone in the server.",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
   "dependencies": {
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "moment": "^2.26.0",
     "purpl-markov-chain": "^2.0.2"
   }
 }
