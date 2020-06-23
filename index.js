@@ -107,6 +107,12 @@ client.on("message", msg => {
 If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
 You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
+                {name: "Other:", value:
+            `The new clone/regen footer allows for a quick glance at generation metrics:
+\`M:\` - Shows the number of messages that were used to generate the chain.
+\`O:\` - The markov chain [order](https://qr.ae/pNK5KG) used.
+\`L:\` - The maximum length for generated messages.`
+        },
                     {
                         name: "Tidbits:", value:
                             `Uptime: **${await fetchUptime()}**
