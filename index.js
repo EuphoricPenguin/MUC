@@ -1,12 +1,12 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.5.3 - working on fixing the all or everyone message receiving
+ * v1.6.0 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
 
-const Markov = require("purpl-markov-chain");
+const Markov = require("js-markov");
 const Moment = require("moment");
 
 const Discord = require("discord.js");
@@ -26,6 +26,8 @@ client.on("message", msg => {
     let guild = msg.guild.id;
     if (!(guild in guildsObj)) guildsObj[guild] = {};
     if (!("prefix" in guildsObj[guild])) guildsObj[guild].prefix = config.prefix;
+    if(!("order" in guildsObj[guild])) guildsObj[guild].order = config.order;
+    if(!("length" in guildsObj[guild])) guildsObj[guild].length = config.length;
 
     if (!msg.guild || !(msg.content.startsWith(guildsObj[guild].prefix))) return;
     let command = msg.content.substring(guildsObj[guild].prefix.length);
@@ -47,20 +49,18 @@ client.on("message", msg => {
                 return;
             }
             let targetUser = await client.users.fetch(id);
-            let gO = guildsObj[guild];
             fetchMessages(targetUser)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
-                    gO.chain = new Markov();
-                    gO.user = targetUser;
+                    guildsObj[guild].chain = new Markov();
+                    guildsObj[guild].user = targetUser;
                     console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
-                    msgs.forEach(msg => {
-                        guildsObj[guild].chain.update(msg);
-                    });
+                    guildsObj[guild].chain.addStates(msgs);
+                    guildsObj[guild].chain.train(guildsObj[guild].order);
                     let clone = new Discord.MessageEmbed()
                         .setColor("#FFFFFF")
                         .setAuthor(`${guildsObj[guild].user.tag} might say:`, guildsObj[guild].user.displayAvatarURL())
-                        .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
+                        .setDescription(`\`\`\`${guildsObj[guild].chain.generateRandom(guildsObj[guild].length)}\`\`\``);
                     msg.channel.send(clone);
                 });
         },
@@ -70,7 +70,7 @@ client.on("message", msg => {
                 let regen = new Discord.MessageEmbed()
                     .setColor("#FFFFFF")
                     .setAuthor(`${guildsObj[guild].user.tag} also might say:`, guildsObj[guild].user.displayAvatarURL())
-                    .setDescription(`\`\`\`${guildsObj[guild].chain.generate()}\`\`\``);
+                    .setDescription(`\`\`\`${guildsObj[guild].chain.generateRandom(guildsObj[guild].length)}\`\`\``);
                 msg.channel.send(regen);
             } else {
                 let issue = new Discord.MessageEmbed()
@@ -120,7 +120,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         commandObjKeys.forEach(key => {
             if (commandArr[0] === key && exec) {
                 msg.channel.startTyping();
-                commandsObj[commandArr[0]](commandArr[1])
+                commandsObj[commandArr[0]](commandArr[1], commandArr[2], commandArr[3])
                     .then(() => {
                         msg.channel.stopTyping();
                     });

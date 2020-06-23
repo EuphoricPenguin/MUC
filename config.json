@@ -1,5 +1,7 @@
 {
     "prefix": ",m",
     "prefixPerm": "MANAGE_GUILD",
-    "helpFooter": "MUC v1.5.3 (c) 2020 EuphoricPenguin, MIT License"
+    "order": 6,
+    "length": 500,
+    "helpFooter": "MUC v1.6.0 (c) 2020 EuphoricPenguin, MIT License"
 }
