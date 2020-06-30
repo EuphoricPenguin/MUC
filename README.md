@@ -21,4 +21,10 @@ After testing a few potential libraries for generation, I decided upon `js-marko
 
 `L:` - The maximum length for generated messages.
 
-If you wish to run it youself, you must first install Node.JS >12. Download and unzip the repo, and create a *.env* file with your bot's token, lke this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in.
+If you wish to run it youself, you must first install *Node.JS* (>12). Download and unzip the repo, and create a *.env* file with your bot's token, like this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in, like this:
+```
+MUC logged in as: MUC#0108
+cloning FatFreeMilk#9122 in Personal Choccy
+regenerating FatFreeMilk#9122 in Personal Choccy
+```
+*(Information on guilds & users that use the main commands are printed to console)*
