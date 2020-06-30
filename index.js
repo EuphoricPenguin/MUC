@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.6.1 - working on fixing the all or everyone message receiving
+ * v1.6.2 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -27,7 +27,7 @@ client.on("message", msg => {
     if (!(guild in guildsObj)) guildsObj[guild] = {};
     if (!("prefix" in guildsObj[guild])) guildsObj[guild].prefix = config.prefix;
     if (!("order" in guildsObj[guild])) guildsObj[guild].order = config.order;
-    if (!("length" in guildsObj[guild])) guildsObj[guild].length = config.length;
+    if (!("length" in guildsObj[guild])) guildsObj[guild].length = 0;
 
     if (!msg.guild || !(msg.content.startsWith(guildsObj[guild].prefix))) return;
     let command = msg.content.substring(guildsObj[guild].prefix.length);
@@ -57,6 +57,10 @@ client.on("message", msg => {
                     guildsObj[guild].msgCnt = msgs.length;
                     console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                     guildsObj[guild].chain.addStates(msgs);
+                    let meanLength = 0;
+                    msgs.forEach(m => meanLength += m.length);
+                    meanLength /= msgs.length;
+                    guildsObj[guild].length = Math.round(meanLength);
                     guildsObj[guild].chain.train(guildsObj[guild].order);
                     let clone = new Discord.MessageEmbed()
                         .setColor("#FFFFFF")
@@ -159,7 +163,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
             let issue = new Discord.MessageEmbed()
                 .setColor("#F93A2F")
                 .setAuthor("Error:")
-                .setDescription(`*Huston, we can't see anything.* Looks like that user hasn't sent any plain-text messages.`);
+                .setDescription(`*Huston, we can't see anything.* Looks like that user hasn't sent any plain-text messages (out of the last 100).`);
             msg.reply(issue);
             return true;
         }
