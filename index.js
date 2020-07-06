@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.6.2 - working on fixing the all or everyone message receiving
+ * v1.6.3 - working on fixing the all or everyone message receiving
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -49,7 +49,7 @@ client.on("message", msg => {
                 return;
             }
             let targetUser = await client.users.fetch(id);
-            fetchMessages(targetUser)
+            fetchMessages(targetUser, config.max)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
                     guildsObj[guild].chain = new Markov();
@@ -111,12 +111,13 @@ client.on("message", msg => {
 If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
 You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
-                {name: "Other:", value:
-            `The new clone/regen footer allows for a quick glance at generation metrics:
+                    {
+                        name: "Other:", value:
+                            `The new clone/regen footer allows for a quick glance at generation metrics:
 \`M:\` - Shows the number of messages that were used to generate the chain.
 \`O:\` - The markov chain [order](https://qr.ae/pNK5KG) used.
 \`L:\` - The maximum length for generated messages.`
-        },
+                    },
                     {
                         name: "Tidbits:", value:
                             `Uptime: **${await fetchUptime()}**
@@ -144,14 +145,24 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         return foundKey;
     }
 
-    async function fetchMessages(user) {
-        let output = await msg.channel.messages.fetch({ limit: 100 });
-        output = output.map(m => {
-            if (!m.author.bot && m.author.id === user.id) {
-                return m.content;
-            }
-        });
-        return output.filter(m => m !== undefined && !(m.startsWith(guildsObj[guild].prefix)));
+    async function fetchMessages(user, max) {
+        let masterOutput = [];
+        let options = { limit: 100 };
+        let lastId;
+        let flag = true;
+        while (flag) {
+            if (lastId) options.before = lastId;
+            let output = await msg.channel.messages.fetch(options);
+            lastId = output.last().id;
+            if (output.size !== 100 || masterOutput.length >= (max - 100)) flag = false;
+            output = output.map(m => {
+                if (!m.author.bot && m.author.id === user.id) {
+                    return m.content;
+                }
+            });
+            masterOutput = masterOutput.concat(output.filter(m => m !== undefined && !(m.startsWith(guildsObj[guild].prefix))));
+        }
+        return masterOutput;
     }
 
     async function fetchUptime() {

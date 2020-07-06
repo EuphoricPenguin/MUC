@@ -5,7 +5,8 @@
 With v1.6.x, three commands are present:
 
 `,m clone @user` will clone a user based on their id, ~~or the keyword `all` (no @)~~ *(Temporarily disabled, will be fixed in a later update)*.
-The bot uses the last 100 sent messages to generate a markov chain, filtering based on id.
+The bot loops over the last sent messages to generate a markov chain, filtering based on id.
+It will cap off at roughly 200 of a particular user's messages, or if there's no messages left.
 
 `,m regen` will use the last created markov chain for your server, and generate another reply.
 
