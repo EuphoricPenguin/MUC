@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.6.3 - working on fixing the all or everyone message receiving
+ * v1.6.4
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -49,7 +49,7 @@ client.on("message", msg => {
                 return;
             }
             let targetUser = await client.users.fetch(id);
-            fetchMessages(targetUser, config.max)
+            fetchMessages(config.max, targetUser)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
                     guildsObj[guild].chain = new Markov();
@@ -69,6 +69,27 @@ client.on("message", msg => {
                         .setFooter(`M: ${guildsObj[guild].msgCnt} O: ${guildsObj[guild].order} L: ${guildsObj[guild].length}`);
                     msg.channel.send(clone);
                 });
+        },
+        "cloneall": async function () {
+            fetchMessages(config.max)
+            .then(msgs => {
+                if (invalidUserCheck(msgs)) return;
+                let chain = new Markov();
+                let msgCnt = msgs.length;
+                console.log(`cloning everyone in ${client.guilds.cache.get(guild).name}`);
+                chain.addStates(msgs);
+                let meanLength = 0;
+                msgs.forEach(m => meanLength += m.length);
+                meanLength /= msgs.length;
+                let length = Math.round(meanLength);
+                chain.train(guildsObj[guild].order);
+                let clone = new Discord.MessageEmbed()
+                    .setColor("#FFFFFF")
+                    .setAuthor(`Everyone might say:`)
+                    .setDescription(`\`\`\`${chain.generateRandom(length)}\`\`\``)
+                    .setFooter(`M: ${msgCnt} O: ${guildsObj[guild].order} L: ${length}`);
+                msg.channel.send(clone);
+            });  
         },
         "regen": async function () {
             if (guildsObj[guild].user !== undefined) {
@@ -145,7 +166,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         return foundKey;
     }
 
-    async function fetchMessages(user, max) {
+    async function fetchMessages(max, user) {
         let masterOutput = [];
         let options = { limit: 100 };
         let lastId;
@@ -156,7 +177,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
             lastId = output.last().id;
             if (output.size !== 100 || masterOutput.length >= (max - 100)) flag = false;
             output = output.map(m => {
-                if (!m.author.bot && m.author.id === user.id) {
+                if (!m.author.bot && (!user || m.author.id === user.id)) {
                     return m.content;
                 }
             });
@@ -174,7 +195,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
             let issue = new Discord.MessageEmbed()
                 .setColor("#F93A2F")
                 .setAuthor("Error:")
-                .setDescription(`*Huston, we can't see anything.* Looks like that user hasn't sent any plain-text messages (out of the last 100).`);
+                .setDescription(`*Huston, we can't see anything.* Looks like that user hasn't sent any plain-text messages.`);
             msg.reply(issue);
             return true;
         }
