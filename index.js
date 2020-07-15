@@ -130,6 +130,7 @@ client.on("message", msg => {
                     name: "Commands:", value:
                         `Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
 If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
+You can also use \`${guildsObj[guild].prefix} cloneall\` to clone everyone in a specified channel.
 You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
                     {
