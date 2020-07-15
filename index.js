@@ -72,24 +72,24 @@ client.on("message", msg => {
         },
         "cloneall": async function () {
             fetchMessages(config.max)
-            .then(msgs => {
-                if (invalidUserCheck(msgs)) return;
-                let chain = new Markov();
-                let msgCnt = msgs.length;
-                console.log(`cloning everyone in ${client.guilds.cache.get(guild).name}`);
-                chain.addStates(msgs);
-                let meanLength = 0;
-                msgs.forEach(m => meanLength += m.length);
-                meanLength /= msgs.length;
-                let length = Math.round(meanLength);
-                chain.train(guildsObj[guild].order);
-                let clone = new Discord.MessageEmbed()
-                    .setColor("#FFFFFF")
-                    .setAuthor(`Everyone might say:`)
-                    .setDescription(`\`\`\`${chain.generateRandom(length)}\`\`\``)
-                    .setFooter(`M: ${msgCnt} O: ${guildsObj[guild].order} L: ${length}`);
-                msg.channel.send(clone);
-            });  
+                .then(msgs => {
+                    if (invalidUserCheck(msgs)) return;
+                    let chain = new Markov();
+                    let msgCnt = msgs.length;
+                    console.log(`cloning everyone in ${client.guilds.cache.get(guild).name}`);
+                    chain.addStates(msgs);
+                    let meanLength = 0;
+                    msgs.forEach(m => meanLength += m.length);
+                    meanLength /= msgs.length;
+                    let length = Math.round(meanLength);
+                    chain.train(guildsObj[guild].order);
+                    let clone = new Discord.MessageEmbed()
+                        .setColor("#FFFFFF")
+                        .setAuthor(`Everyone might say:`)
+                        .setDescription(`\`\`\`${chain.generateRandom(length)}\`\`\``)
+                        .setFooter(`M: ${msgCnt} O: ${guildsObj[guild].order} L: ${length}`);
+                    msg.channel.send(clone);
+                });
         },
         "regen": async function () {
             if (guildsObj[guild].user !== undefined) {
