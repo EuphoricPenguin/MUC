@@ -8,7 +8,7 @@ With v1.6.x, three commands are present:
 
 `,m clone @user` will clone a user based on their id. The bot loops over the last sent messages in the channel the command was issued to generate a markov chain, filtering based on id. It will cap off at roughly 250 (or whatever max in the config is set to) of a particular user's messages, or if there's no messages left.
 
-`m cloneall` will clone everyone in a channel, similar to the clone command. It does not support regen at this time.
+`,m cloneall` will clone everyone in a channel, similar to the clone command. It does not support regen at this time.
 
 `,m regen` will use the last created markov chain for your server, and generate another reply.
 
