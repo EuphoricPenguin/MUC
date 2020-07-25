@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC or M.U.C)
  * (c) EuphoricPenguin, MIT License
- * v1.6.4
+ * v1.6.5
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -109,7 +109,7 @@ client.on("message", msg => {
             }
         },
         "prefix": async function (newPrefix) {
-            if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm)) {
+            if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm) && newPrefix.length <= 10) {
                 guildsObj[guild].prefix = newPrefix;
                 let prefixChange = new Discord.MessageEmbed()
                     .setColor("#0099E1")
@@ -119,7 +119,7 @@ client.on("message", msg => {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
-                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, or the prefix is the same.`);
+                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, the prefix is too long, or the prefix is the same.`);
                 return msg.reply(issue);
             }
         },

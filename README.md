@@ -2,7 +2,7 @@
 
 *MUC (Markov User Cloner) is a new Discord bot project of mine, it is intended to be a public bot. While many bots exist to facilitate interaction with markov chains, I wish to create a simple open source example that people can both interact with and modify. This serves mainly as a refresher for me to try some new things in JavaScript, and as my first foray into public bot development.*
 
-**I've added most of the features I wanted to see in MUC; I'm mostly retiring development here.**
+**I've added most of the features I wanted to see in MUC. Once I find a viable way to launch a beta for the bot, I will do so.**
 
 With v1.6.x, three commands are present:
 
@@ -12,7 +12,7 @@ With v1.6.x, three commands are present:
 
 `,m regen` will use the last created markov chain for your server, and generate another reply.
 
-`,m prefix (prefix)` will change the prefix for your server.
+`,m prefix (prefix)` will change the prefix for your server; it must be 10 or fewer characters.
 
 `,m help` will send a message in chat explaining this information in a concise manner.
 
@@ -24,7 +24,7 @@ After testing a few potential libraries for generation, I decided upon `js-marko
 
 `L:` - The maximum length for generated messages.
 
-If you wish to run it youself, you must first install *Node.JS* (>12). Download and unzip the repo, and create a *.env* file with your bot's token, like this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in, like this:
+If you wish to run it youself, you must first install *Node.JS* (working on 14.5). Download and unzip the repo, and create a *.env* file with your bot's token, like this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in, like this:
 ```
 MUC logged in as: MUC#0108
 cloning FatFreeMilk#9122 in Personal Choccy
