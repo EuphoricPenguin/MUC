@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.1 - working on fixing the all or everyone message receiving
+ * v1.6.5
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -27,7 +27,7 @@ client.on("message", msg => {
     if (!(guild in guildsObj)) guildsObj[guild] = {};
     if (!("prefix" in guildsObj[guild])) guildsObj[guild].prefix = config.prefix;
     if (!("order" in guildsObj[guild])) guildsObj[guild].order = config.order;
-    if (!("length" in guildsObj[guild])) guildsObj[guild].length = config.length;
+    if (!("length" in guildsObj[guild])) guildsObj[guild].length = 0;
 
     if (!msg.guild || !(msg.content.startsWith(guildsObj[guild].prefix))) return;
     let command = msg.content.substring(guildsObj[guild].prefix.length);
@@ -49,7 +49,7 @@ client.on("message", msg => {
                 return;
             }
             let targetUser = await client.users.fetch(id);
-            fetchMessages(targetUser)
+            fetchMessages(config.max, targetUser)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
                     guildsObj[guild].chain = new Markov();
@@ -57,12 +57,37 @@ client.on("message", msg => {
                     guildsObj[guild].msgCnt = msgs.length;
                     console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                     guildsObj[guild].chain.addStates(msgs);
+                    let meanLength = 0;
+                    msgs.forEach(m => meanLength += m.length);
+                    meanLength /= msgs.length;
+                    guildsObj[guild].length = Math.round(meanLength);
                     guildsObj[guild].chain.train(guildsObj[guild].order);
                     let clone = new Discord.MessageEmbed()
                         .setColor("#FFFFFF")
                         .setAuthor(`${guildsObj[guild].user.tag} might say:`, guildsObj[guild].user.displayAvatarURL())
                         .setDescription(`\`\`\`${guildsObj[guild].chain.generateRandom(guildsObj[guild].length)}\`\`\``)
                         .setFooter(`M: ${guildsObj[guild].msgCnt} O: ${guildsObj[guild].order} L: ${guildsObj[guild].length}`);
+                    msg.channel.send(clone);
+                });
+        },
+        "cloneall": async function () {
+            fetchMessages(config.max)
+                .then(msgs => {
+                    if (invalidUserCheck(msgs)) return;
+                    let chain = new Markov();
+                    let msgCnt = msgs.length;
+                    console.log(`cloning everyone in ${client.guilds.cache.get(guild).name}`);
+                    chain.addStates(msgs);
+                    let meanLength = 0;
+                    msgs.forEach(m => meanLength += m.length);
+                    meanLength /= msgs.length;
+                    let length = Math.round(meanLength);
+                    chain.train(guildsObj[guild].order);
+                    let clone = new Discord.MessageEmbed()
+                        .setColor("#FFFFFF")
+                        .setAuthor(`Everyone might say:`)
+                        .setDescription(`\`\`\`${chain.generateRandom(length)}\`\`\``)
+                        .setFooter(`M: ${msgCnt} O: ${guildsObj[guild].order} L: ${length}`);
                     msg.channel.send(clone);
                 });
         },
@@ -84,7 +109,7 @@ client.on("message", msg => {
             }
         },
         "prefix": async function (newPrefix) {
-            if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm)) {
+            if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm) && newPrefix.length <= 10) {
                 guildsObj[guild].prefix = newPrefix;
                 let prefixChange = new Discord.MessageEmbed()
                     .setColor("#0099E1")
@@ -94,7 +119,7 @@ client.on("message", msg => {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
-                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, or the prefix is the same.`);
+                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, the prefix is too long, or the prefix is the same.`);
                 return msg.reply(issue);
             }
         },
@@ -105,14 +130,16 @@ client.on("message", msg => {
                     name: "Commands:", value:
                         `Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
 If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
+You can also use \`${guildsObj[guild].prefix} cloneall\` to clone everyone in a specified channel.
 You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
-                {name: "Other:", value:
-            `The new clone/regen footer allows for a quick glance at generation metrics:
+                    {
+                        name: "Other:", value:
+                            `The new clone/regen footer allows for a quick glance at generation metrics:
 \`M:\` - Shows the number of messages that were used to generate the chain.
 \`O:\` - The markov chain [order](https://qr.ae/pNK5KG) used.
 \`L:\` - The maximum length for generated messages.`
-        },
+                    },
                     {
                         name: "Tidbits:", value:
                             `Uptime: **${await fetchUptime()}**
@@ -140,14 +167,24 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         return foundKey;
     }
 
-    async function fetchMessages(user) {
-        let output = await msg.channel.messages.fetch({ limit: 100 });
-        output = output.map(m => {
-            if (!m.author.bot && m.author.id === user.id) {
-                return m.content;
-            }
-        });
-        return output.filter(m => m !== undefined && !(m.startsWith(guildsObj[guild].prefix)));
+    async function fetchMessages(max, user) {
+        let masterOutput = [];
+        let options = { limit: 100 };
+        let lastId;
+        let flag = true;
+        while (flag) {
+            if (lastId) options.before = lastId;
+            let output = await msg.channel.messages.fetch(options);
+            lastId = output.last().id;
+            if (output.size !== 100 || masterOutput.length >= (max - 100)) flag = false;
+            output = output.map(m => {
+                if (!m.author.bot && (!user || m.author.id === user.id)) {
+                    return m.content;
+                }
+            });
+            masterOutput = masterOutput.concat(output.filter(m => m !== undefined && !(m.startsWith(guildsObj[guild].prefix))));
+        }
+        return masterOutput;
     }
 
     async function fetchUptime() {
