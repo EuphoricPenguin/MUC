@@ -1,5 +1,5 @@
 /**
- * Markov User Cloner (MUC or M.U.C)
+ * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
  * v1.6.1 - working on fixing the all or everyone message receiving
  */
