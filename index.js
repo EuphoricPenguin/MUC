@@ -137,7 +137,7 @@ client.on("message", msg => {
                         `Use \`${guildsObj[guild].prefix} clone @user\` to clone someone.
 If you want to re-generate a new message, use \`${guildsObj[guild].prefix} regen\`.
 You can also use \`${guildsObj[guild].prefix} cloneall\` to clone everyone in a specified channel.
-You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
+You can change this guild's prefix with \`${guildsObj[guild].prefix} prefix <string>\` (if you have the \`${config.prefixPerm}\` perm).`
                 },
                     {
                         name: "Other:", value:
@@ -150,6 +150,10 @@ You can change this bot's prefix with \`${guildsObj[guild].prefix} prefix <strin
                         name: "Tidbits:", value:
                             `Uptime: **${await fetchUptime()}**
 Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
+                    },
+                    {
+                        name: "Links:", value:
+                            `[**Support Server**](https://discord.gg/MsREEap) **/** [**Invite Link**](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)`
                     })
                 .setFooter(config.helpFooter, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/ep-icon.png");
             msg.channel.send(help);
