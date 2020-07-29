@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.5
+ * v1.6.6
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -34,8 +34,14 @@ client.on("message", msg => {
     let commandArr = command.split(" ").filter(i => i !== "");
 
     //Strips mentions down to user id's
-    if (commandArr.length > 1 && commandArr[1].includes("<@!")) {
-        commandArr[1] = commandArr[1].substring(3, commandArr[1].length - 1);
+    if (commandArr.length > 1) {
+        let mLength;
+        if (commandArr[1].includes("<!@")) {
+            mLength = 3;
+        } else if (commandArr[1].includes("<@")) {
+            mLength = 2;
+        }
+        commandArr[1] = commandArr[1].substring(mLength, commandArr[1].length - 1);
     }
 
     const commandsObj = {
@@ -156,7 +162,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         commandObjKeys.forEach(key => {
             if (commandArr[0] === key && exec) {
                 msg.channel.startTyping();
-                commandsObj[commandArr[0]](commandArr[1], commandArr[2], commandArr[3])
+                commandsObj[commandArr[0]](commandArr[1], commandArr[2])
                     .then(() => {
                         msg.channel.stopTyping();
                     });
