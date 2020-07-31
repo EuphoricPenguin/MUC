@@ -6,6 +6,8 @@
 
 [***Seed Server***](https://discord.gg/MsREEap)
 
+<img align="right" src="./media/muc-demo-image.png" width="500"> 
+
 With v1.6.x, three commands are present:
 
 `,m clone @user` will clone a user based on their id. The bot loops over the last sent messages in the channel the command was issued to generate a markov chain, filtering based on id. It will cap off at roughly 250 (or whatever max in the config is set to) of a particular user's messages, or if there's no messages left.
@@ -29,7 +31,7 @@ After testing a few potential libraries for generation, I decided upon `js-marko
 If you wish to run it youself, you must first install *Node.JS* (working on 14.5). Download and unzip the repo, and create a *.env* file with your bot's token, like this: `TOKEN=""`. Then run `npm install` and finally `node index.js`. You should see a message confrming the bot has logged in, like this:
 ```
 MUC logged in as: MUC#0108
-cloning FatFreeMilk#9122 in Personal Choccy
-regenerating FatFreeMilk#9122 in Personal Choccy
+cloning User#0000 in Guild Nickname
+regenerating User#0000 in Guild Nickname
 ```
 *(Information on guilds & users that use the main commands are printed to console)*
