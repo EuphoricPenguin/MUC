@@ -4,7 +4,7 @@
 
 [***Invite MUC***](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)
 
-[***Support Server***](https://discord.gg/MsREEap)
+[***Seed Server***](https://discord.gg/MsREEap)
 
 With v1.6.x, three commands are present:
 

@@ -2,6 +2,7 @@
     "prefix": ",m",
     "prefixPerm": "MANAGE_GUILD",
     "order": 4,
-    "max": 250,
-    "helpFooter": "MUC v1.6.6 (c) 2020 EuphoricPenguin, MIT License"
+    "maxLoops": 10,
+    "maxMessages": 250,
+    "helpFooter": "MUC v1.6.7 (c) 2020 EuphoricPenguin, MIT License"
 }

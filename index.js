@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.6
+ * v1.6.7
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -36,7 +36,7 @@ client.on("message", msg => {
     //Strips mentions down to user id's
     if (commandArr.length > 1) {
         let mLength;
-        if (commandArr[1].includes("<!@")) {
+        if (commandArr[1].includes("<@!")) {
             mLength = 3;
         } else if (commandArr[1].includes("<@")) {
             mLength = 2;
@@ -55,7 +55,7 @@ client.on("message", msg => {
                 return;
             }
             let targetUser = await client.users.fetch(id);
-            fetchMessages(config.max, targetUser)
+            fetchMessages(config.maxLoops, config.maxMessages, targetUser)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
                     guildsObj[guild].chain = new Markov();
@@ -77,7 +77,7 @@ client.on("message", msg => {
                 });
         },
         "cloneall": async function () {
-            fetchMessages(config.max)
+            fetchMessages(config.maxLoops, config.max)
                 .then(msgs => {
                     if (invalidUserCheck(msgs)) return;
                     let chain = new Markov();
@@ -153,7 +153,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
                     },
                     {
                         name: "Links:", value:
-                            `[**Github Repo**](https://github.com/EuphoricPenguin/MUC) **/** [**Support Server**](https://discord.gg/MsREEap) **/** [**Invite Link**](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)`
+                            `[Github Repo](https://github.com/EuphoricPenguin/MUC) / [Seed Server](https://discord.gg/MsREEap) / [Invite Link](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)`
                     })
                 .setFooter(config.helpFooter, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/ep-icon.png");
             msg.channel.send(help);
@@ -177,17 +177,18 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         return foundKey;
     }
 
-    async function fetchMessages(max, user) {
+    async function fetchMessages(maxLoops, maxMessages, user) {
         let masterOutput = [];
         let options = { limit: 100 };
         let lastId;
         let flag = true;
-        while (flag) {
+        for (let i = 0; flag; i++) {
             if (lastId) options.before = lastId;
             let output = await msg.channel.messages.fetch(options);
             lastId = output.last().id;
-            if (output.size !== 100 || masterOutput.length >= (max - 100)) flag = false;
+            if (output.size !== 100 || masterOutput.length >= (maxMessages - 100) || i >= maxLoops) flag = false;
             output = output.map(m => {
+                //!user checks for blank object as parameter
                 if (!m.author.bot && (!user || m.author.id === user.id)) {
                     return m.content;
                 }
