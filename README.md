@@ -6,7 +6,7 @@
 
 [***Seed Server***](https://discord.gg/MsREEap)
 
-<img align="right" src="./media/muc-demo-image.png" width="500"> 
+<img align="right" src="./media/muc-demo-image.png" width="300"> 
 
 With v1.6.x, three commands are present:
 
