@@ -1,6 +1,6 @@
 {
   "name": "markov-user-cloner",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A Discord bot that clones everyone in the server.",
   "main": "index.js",
   "scripts": {

@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.7
+ * v1.6.8
  */
 require("dotenv").config();
 const config = require("./config.json");
