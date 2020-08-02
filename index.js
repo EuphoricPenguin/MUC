@@ -22,14 +22,17 @@ client.on("ready", () => {
 
 client.on("message", msg => {
     if (msg.author.bot) return;
-
+    if (!msg.guild) {
+        msg.author.send("I'm sorry, MUC doesn't support DM interaction at this time.");
+        return;
+    }
     let guild = msg.guild.id;
     if (!(guild in guildsObj)) guildsObj[guild] = {};
     if (!("prefix" in guildsObj[guild])) guildsObj[guild].prefix = config.prefix;
     if (!("order" in guildsObj[guild])) guildsObj[guild].order = config.order;
     if (!("length" in guildsObj[guild])) guildsObj[guild].length = 0;
 
-    if (!msg.guild || !(msg.content.startsWith(guildsObj[guild].prefix))) return;
+    if (!(msg.content.startsWith(guildsObj[guild].prefix))) return;
     let command = msg.content.substring(guildsObj[guild].prefix.length);
     let commandArr = command.split(" ").filter(i => i !== "");
 
