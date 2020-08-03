@@ -156,7 +156,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
                     },
                     {
                         name: "Links:", value:
-                            `[Github Repo](https://github.com/EuphoricPenguin/MUC) / [Seed Server](https://discord.gg/MsREEap) / [Invite Link](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)`
+                            `[Github Repo](https://github.com/EuphoricPenguin/MUC) / [Discord Server](https://discord.gg/MsREEap) / [Bot Invite](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)`
                     })
                 .setFooter(config.helpFooter, "https://raw.githubusercontent.com/EuphoricPenguin/MUC/master/media/ep-icon.png");
             msg.channel.send(help);
