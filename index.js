@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.8
+ * v1.6.9
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -66,10 +66,9 @@ client.on("message", msg => {
                     guildsObj[guild].msgCnt = msgs.length;
                     console.log(`cloning ${guildsObj[guild].user.tag} in ${client.guilds.cache.get(guild).name}`);
                     guildsObj[guild].chain.addStates(msgs);
-                    let meanLength = 0;
-                    msgs.forEach(m => meanLength += m.length);
-                    meanLength /= msgs.length;
-                    guildsObj[guild].length = Math.round(meanLength);
+                    let maxLen = 0;
+                    msgs.forEach(m => { if (m.length > maxLen) maxLen = m.length; });
+                    guildsObj[guild].length = maxLen;
                     guildsObj[guild].chain.train(guildsObj[guild].order);
                     let clone = new Discord.MessageEmbed()
                         .setColor("#FFFFFF")
@@ -87,10 +86,9 @@ client.on("message", msg => {
                     let msgCnt = msgs.length;
                     console.log(`cloning everyone in ${client.guilds.cache.get(guild).name}`);
                     chain.addStates(msgs);
-                    let meanLength = 0;
-                    msgs.forEach(m => meanLength += m.length);
-                    meanLength /= msgs.length;
-                    let length = Math.round(meanLength);
+                    let maxLen = 0;
+                    msgs.forEach(m => { if (m.length > maxLen) maxLen = m.length; });
+                    let length = maxLen;
                     chain.train(guildsObj[guild].order);
                     let clone = new Discord.MessageEmbed()
                         .setColor("#FFFFFF")
