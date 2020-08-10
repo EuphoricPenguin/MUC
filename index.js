@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.9
+ * v1.6.10
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -37,9 +37,9 @@ client.on("message", msg => {
     let commandArr = command.split(" ").filter(i => i !== "");
 
     //Strips mentions down to user id's
-    if (commandArr.length > 1) {
+    if (commandArr.length > 1 && msg.mentions.members.first()) {
         let mLength;
-        if (commandArr[1].includes("<@!")) {
+        if (commandArr[1].startsWith("<@!")) {
             mLength = 3;
         } else if (commandArr[1].includes("<@")) {
             mLength = 2;
@@ -116,7 +116,7 @@ client.on("message", msg => {
             }
         },
         "prefix": async function (newPrefix) {
-            if (!(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm) && newPrefix.length <= 10) {
+            if (newPrefix != undefined && !(guildsObj[guild].prefix === newPrefix) && msg.member.hasPermission(config.prefixPerm) && newPrefix.length <= 10) {
                 guildsObj[guild].prefix = newPrefix;
                 let prefixChange = new Discord.MessageEmbed()
                     .setColor("#0099E1")
@@ -126,7 +126,7 @@ client.on("message", msg => {
                 let issue = new Discord.MessageEmbed()
                     .setColor("#F93A2F")
                     .setAuthor("Error:")
-                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, the prefix is too long, or the prefix is the same.`);
+                    .setDescription(`Either you don't have the \`${config.prefixPerm}\` *(or admin/owner)* permission, the prefix is too long, the prefix is blank, or the prefix is the same.`);
                 return msg.reply(issue);
             }
         },
@@ -169,7 +169,7 @@ Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.s
         commandObjKeys.forEach(key => {
             if (commandArr[0] === key && exec) {
                 msg.channel.startTyping();
-                commandsObj[commandArr[0]](commandArr[1], commandArr[2])
+                commandsObj[commandArr[0]](commandArr[1])
                     .then(() => {
                         msg.channel.stopTyping();
                     });
