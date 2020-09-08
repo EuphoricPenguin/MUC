@@ -1,7 +1,7 @@
 /**
  * Markov User Cloner (MUC)
  * (c) EuphoricPenguin, MIT License
- * v1.6.10
+ * v1.6.11
  */
 require("dotenv").config();
 const config = require("./config.json");
@@ -150,7 +150,7 @@ You can change this guild's prefix with \`${guildsObj[guild].prefix} prefix <str
                     {
                         name: "Tidbits:", value:
                             `Uptime: **${await fetchUptime()}**
-Guild ratio: ${Object.keys(guildsObj).length} (active)/**${client.guilds.cache.size} (total)** *(${Object.keys(guildsObj).length / client.guilds.cache.size})*`
+Guild ratio: **${client.guilds.cache.size} (current)**/${Object.keys(guildsObj).length} (historical) *(${(client.guilds.cache.size / Object.keys(guildsObj).length).toFixed(2)})*`
                     },
                     {
                         name: "Links:", value:
