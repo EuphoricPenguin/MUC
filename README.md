@@ -4,7 +4,7 @@
 
 [***Invite MUC***](https://discord.com/api/oauth2/authorize?client_id=689992764020097082&permissions=117824&scope=bot)
 
-[***Seed Server***](https://discord.gg/MsREEap)
+[***Discord Server***](https://discord.gg/MsREEap)
 
 <img align="right" src="./media/muc-demo-image.png" width="400"> 
 
